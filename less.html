@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عروض تقديمية - هياكل البيانات C++</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin: 0;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .topic-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-color: #3498db;
+        }
+
+        .topic-card h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .topic-card p {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .topic-card .features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .topic-card .features li {
+            color: #27ae60;
+            margin-bottom: 8px;
+            padding-right: 20px;
+            position: relative;
+        }
+
+        .topic-card .features li::before {
+            content: "✓";
+            position: absolute;
+            right: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .presentation-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .presentation-header {
+            background: #3498db;
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .presentation-content {
+            padding: 30px;
+        }
+
+        .slide {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: "C++";
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+        }
+
+        .diagram {
+            background: #ecf0f1;
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            font-family: monospace;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .nav-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #2980b9;
+        }
+
+        .nav-button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        .back-button {
+            background: #e74c3c;
+        }
+
+        .back-button:hover {
+            background: #c0392b;
+        }
+
+        .example-box {
+            background: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .note-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .visual-demo {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .memory-block {
+            display: inline-block;
+            width: 60px;
+            height: 40px;
+            border: 2px solid #3498db;
+            margin: 2px;
+            line-height: 36px;
+            background: #ecf0f1;
+            font-weight: bold;
+        }
+
+        .memory-block.filled {
+            background: #3498db;
+            color: white;
+        }
+
+        .arrow {
+            font-size: 20px;
+            color: #e74c3c;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>هياكل البيانات باستخدام C++</h1>
+            <p>عروض تقديمية تفاعلية مع أمثلة عملية وتطبيقات</p>
+            <p>-</p>
+
+            <p>م/أيمن عبدالله عبدالعزيز</p>
+
+        </div>
+
+        <div id="topics-section">
+            <div class="topics-grid">
+                <div class="topic-card" onclick="showPresentation('arrays')">
+                    <h3>المصفوفات (Arrays)</h3>
+                    <p>تعلم أساسيات المصفوفات وعملياتها الأساسية</p>
+                    <ul class="features">
+                        <li>إنشاء وإدارة المصفوفات</li>
+                        <li>عمليات الإدراج والحذف</li>
+                        <li>البحث والفرز</li>
+                        <li>التطبيقات العملية</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card" onclick="showPresentation('linkedlist')">
+                    <h3>القوائم المترابطة (Linked Lists)</h3>
+                    <p>استكشاف القوائم المترابطة وتطبيقاتها</p>
+                    <ul class="features">
+                        <li>البنية الأساسية للعقد</li>
+                        <li>عمليات الإدراج والحذف</li>
+                        <li>المقارنة مع المصفوفات</li>
+                        <li>أمثلة تطبيقية</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card" onclick="showPresentation('doubly')">
+                    <h3>القوائم المضاعفة والدائرية</h3>
+                    <p>القوائم المتقدمة وتطبيقاتها الخاصة</p>
+                    <ul class="features">
+                        <li>القوائم ثنائية الاتجاه</li>
+                        <li>القوائم الدائرية</li>
+                        <li>المزايا والعيوب</li>
+                        <li>حالات الاستخدام</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card" onclick="showPresentation('stack')">
+                    <h3>المكدس (Stack)</h3>
+                    <p>فهم مبدأ LIFO وتطبيقات المكدس</p>
+                    <ul class="features">
+                        <li>عمليات Push و Pop</li>
+                        <li>التطبيق بالمصفوفات والقوائم</li>
+                        <li>فحص توازن الأقواس</li>
+                        <li>تطبيقات متقدمة</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card" onclick="showPresentation('queue')">
+                    <h3>الطابور (Queue)</h3>
+                    <p>تعلم مبدأ FIFO وتطبيقات الطوابير</p>
+                    <ul class="features">
+                        <li>عمليات Enqueue و Dequeue</li>
+                        <li>الطوابير الدائرية</li>
+                        <li>محاكاة الأنظمة</li>
+                        <li>تطبيقات الشبكات</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card" onclick="showPresentation('trees')">
+                    <h3>الأشجار الثنائية (Binary Trees)</h3>
+                    <p>استكشاف الأشجار وطرق الجولة</p>
+                    <ul class="features">
+                        <li>البنية الهيكلية للأشجار</li>
+                        <li>طرق الجولة الثلاث</li>
+                        <li>أشجار البحث</li>
+                        <li>التطبيقات المتقدمة</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- عرض المصفوفات -->
+        <div id="arrays-presentation" class="presentation-container">
+            <div class="presentation-header">
+                <h2>المصفوفات (Arrays)</h2>
+                <button class="nav-button back-button" onclick="showTopics()">العودة للقائمة الرئيسية</button>
+            </div>
+            <div class="presentation-content">
+                <!-- الشريحة 1: مقدمة -->
+                <div class="slide active">
+                    <h2>ما هي المصفوفة؟</h2>
+                    <p>المصفوفة هي هيكل بيانات خطي يخزن مجموعة من العناصر من نفس النوع في مواضع ذاكرة متتالية.</p>
+                    
+                    <div class="visual-demo">
+                        <h4>التمثيل في الذاكرة:</h4>
+                        <div class="memory-block filled">5</div>
+                        <div class="memory-block filled">12</div>
+                        <div class="memory-block filled">8</div>
+                        <div class="memory-block filled">3</div>
+                        <div class="memory-block filled">16</div>
+                        <br><br>
+                        <p>المؤشر: &nbsp;&nbsp; 0 &nbsp;&nbsp;&nbsp;&nbsp; 1 &nbsp;&nbsp;&nbsp;&nbsp; 2 &nbsp;&nbsp;&nbsp;&nbsp; 3 &nbsp;&nbsp;&nbsp;&nbsp; 4</p>
+                    </div>
+
+                    <div class="code-block">
+// تصريح مصفوفة بحجم 5 عناصر
+int numbers[5] = {5, 12, 8, 3, 16};
+
+// الوصول للعناصر
+cout << numbers[0]; // النتيجة: 5
+cout << numbers[2]; // النتيجة: 8
+                    </div>
+
+                    <div class="note-box">
+                        <strong>ملاحظة:</strong> ترقيم عناصر المصفوفة يبدأ من الصفر (0) وليس الواحد.
+                    </div>
+                </div>
+
+                <!-- الشريحة 2: خصائص المصفوفات -->
+                <div class="slide">
+                    <h2>خصائص المصفوفات</h2>
+                    
+                    <div class="example-box">
+                        <h4>المزايا:</h4>
+                        <ul>
+                            <li><strong>الوصول السريع:</strong> O(1) للوصول لأي عنصر بالمؤشر</li>
+                            <li><strong>استخدام الذاكرة:</strong> عناصر متتالية في الذاكرة</li>
+                            <li><strong>البساطة:</strong> سهولة في الفهم والتطبيق</li>
+                        </ul>
+                    </div>
+
+                    <div class="note-box">
+                        <h4>العيوب:</h4>
+                        <ul>
+                            <li><strong>الحجم الثابت:</strong> لا يمكن تغيير الحجم بعد التصريح</li>
+                            <li><strong>الإدراج والحذف:</strong> عمليات مكلفة O(n)</li>
+                            <li><strong>إهدار الذاكرة:</strong> إذا لم تُستخدم كل العناصر</li>
+                        </ul>
+                    </div>
+
+                    <div class="code-block">
+// مثال على مشكلة الحجم الثابت
+int students[100];  // مصفوفة لـ 100 طالب
+// ماذا لو احتجنا لـ 150 طالب؟
+// ماذا لو استخدمنا 20 طالب فقط؟
+                    </div>
+                </div>
+
+                <!-- الشريحة 3: العمليات الأساسية -->
+                <div class="slide">
+                    <h2>العمليات الأساسية على المصفوفات</h2>
+
+                    <h3>1. الإدراج (Insertion)</h3>
+                    <div class="code-block">
+void insertAt(int arr[], int &size, int index, int value) {
+    // إزاحة العناصر لليمين
+    for(int i = size; i > index; i--) {
+        arr[i] = arr[i-1];
+    }
+    
+    // إدراج القيمة الجديدة
+    arr[index] = value;
+    size++;
+    
+    cout << "تم إدراج " << value << " في الموضع " << index << endl;
+}
+                    </div>
+
+                    <div class="visual-demo">
+                        <h4>مثال: إدراج 7 في الموضع 2</h4>
+                        <p>قبل الإدراج:</p>
+                        <div class="memory-block filled">5</div>
+                        <div class="memory-block filled">12</div>
+                        <div class="memory-block filled">8</div>
+                        <div class="memory-block filled">3</div>
+                        <span class="arrow">→</span>
+                        <p>بعد الإدراج:</p>
+                        <div class="memory-block filled">5</div>
+                        <div class="memory-block filled">12</div>
+                        <div class="memory-block filled" style="background: #e74c3c;">7</div>
+                        <div class="memory-block filled">8</div>
+                        <div class="memory-block filled">3</div>
+                    </div>
+                </div>
+
+                <!-- الشريحة 4: البحث -->
+                <div class="slide">
+                    <h2>البحث في المصفوفات</h2>
+
+                    <h3>البحث الخطي (Linear Search)</h3>
+                    <div class="code-block">
+int linearSearch(int arr[], int size, int target) {
+    for(int i = 0; i < size; i++) {
+        if(arr[i] == target) {
+            return i;  // إرجاع موضع العنصر
+        }
+    }
+    return -1;  // العنصر غير موجود
+}
+
+// استخدام الدالة
+int numbers[] = {5, 12, 8, 3, 16};
+int position = linearSearch(numbers, 5, 8);
+
+if(position != -1) {
+    cout << "تم العثور على العنصر في الموضع: " << position << endl;
+} else {
+    cout << "العنصر غير موجود" << endl;
+}
+                    </div>
+
+                    <div class="example-box">
+                        <strong>التعقيد الزمني:</strong>
+                        <ul>
+                            <li>أفضل حالة: O(1) - العنصر في بداية المصفوفة</li>
+                            <li>أسوأ حالة: O(n) - العنصر في نهاية المصفوفة أو غير موجود</li>
+                            <li>متوسط: O(n/2)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- الشريحة 5: التطبيق العملي -->
+                <div class="slide">
+                    <h2>تطبيق عملي: نظام إدارة الدرجات</h2>
+
+                    <div class="code-block">
+#include &lt;iostream&gt;
+using namespace std;
+
+class GradeManager {
+private:
+    int grades[50];  // مصفوفة لحفظ الدرجات
+    int count;       // عدد الدرجات الحالي
+    
+public:
+    GradeManager() : count(0) {}
+    
+    // إضافة درجة جديدة
+    void addGrade(int grade) {
+        if(count < 50) {
+            grades[count] = grade;
+            count++;
+            cout << "تم إضافة الدرجة: " << grade << endl;
+        } else {
+            cout << "لا يمكن إضافة المزيد من الدرجات!" << endl;
+        }
+    }
+    
+    // حساب المتوسط
+    double calculateAverage() {
+        if(count == 0) return 0;
+        
+        int sum = 0;
+        for(int i = 0; i < count; i++) {
+            sum += grades[i];
+        }
+        return (double)sum / count;
+    }
+    
+    // عرض جميع الدرجات
+    void displayGrades() {
+        cout << "الدرجات: ";
+        for(int i = 0; i < count; i++) {
+            cout << grades[i] << " ";
+        }
+        cout << endl;
+        cout << "المتوسط: " << calculateAverage() << endl;
+    }
+};
+                    </div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="nav-button" id="arrays-prev" onclick="previousSlide('arrays')" disabled>السابق</button>
+                <span class="slide-counter" id="arrays-counter">1 من 5</span>
+                <button class="nav-button" id="arrays-next" onclick="nextSlide('arrays')">التالي</button>
+            </div>
+        </div>
+
+        <!-- عرض القوائم المترابطة -->
+        <div id="linkedlist-presentation" class="presentation-container">
+            <div class="presentation-header">
+                <h2>القوائم المترابطة (Linked Lists)</h2>
+                <button class="nav-button back-button" onclick="showTopics()">العودة للقائمة الرئيسية</button>
+            </div>
+            <div class="presentation-content">
+                <!-- الشريحة 1: مقدمة القوائم المترابطة -->
+                <div class="slide active">
+                    <h2>مقدمة القوائم المترابطة</h2>
+                    <p>القائمة المترابطة هي هيكل بيانات ديناميكي يتكون من سلسلة من العقد (Nodes)، كل عقدة تحتوي على بيانات ومؤشر للعقدة التالية.</p>
+
+                    <div class="diagram">
+                        <h4>بنية العقدة (Node):</h4>
+                        <pre>
+┌─────────┬─────────┐
+│  البيانات │  المؤشر  │
+│  (Data) │ (Next)  │
+└─────────┴─────────┘
+                        </pre>
+                    </div>
+
+                    <div class="code-block">
+// تعريف العقدة
+class Node {
+public:
+    int data;      // البيانات
+    Node* next;    // مؤشر للعقدة التالية
+    
+    // منشئ العقدة
+    Node(int value) {
+        data = value;
+        next = nullptr;
+    }
+};
+                    </div>
+
+                    <div class="visual-demo">
+                        <h4>مثال قائمة مترابطة:</h4>
+                        <div style="font-family: monospace; font-size: 14px;">
+                            Head → [5|→] → [12|→] → [8|→] → [3|NULL]
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الشريحة 2: إنشاء القائمة -->
+                <div class="slide">
+                    <h2>إنشاء وإدارة القائمة المترابطة</h2>
+
+                    <div class="code-block">
+class LinkedList {
+private:
+    Node* head;  // مؤشر لبداية القائمة
+    
+public:
+    // منشئ القائمة
+    LinkedList() {
+        head = nullptr;
+        cout << "تم إنشاء قائمة مترابطة فارغة" << endl;
+    }
+    
+    // فحص إذا كانت القائمة فارغة
+    bool isEmpty() {
+        return head == nullptr;
+    }
+    
+    // حساب عدد العقد
+    int size() {
+        int count = 0;
+        Node* current = head;
+        while(current != nullptr) {
+            count++;
+            current = current->next;
+        }
+        return count;
+    }
+};
+                    </div>
+
+                    <div class="example-box">
+                        <strong>مزايا القوائم المترابطة:</strong>
+                        <ul>
+                            <li>حجم ديناميكي - يمكن الزيادة والنقصان حسب الحاجة</li>
+                            <li>إدراج وحذف سريع في البداية O(1)</li>
+                            <li>عدم إهدار الذاكرة</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- الشريحة 3: عمليات الإدراج -->
+                <div class="slide">
+                    <h2>عمليات الإدراج</h2>
+
+                    <h3>1. الإدراج في البداية</h3>
+                    <div class="code-block">
+void insertAtBeginning(int value) {
+    Node* newNode = new Node(value);
+    newNode->next = head;
+    head = newNode;
+    cout << "تم إضافة " << value << " في بداية القائمة" << endl;
+}
+                    </div>
+
+                    <div class="visual-demo">
+                        <h4>خطوات الإدراج في البداية:</h4>
+                        <p>1. إنشاء عقدة جديدة</p>
+                        <p>2. ربط العقدة الجديدة بـ head الحالي</p>
+                        <p>3. تحديث head ليشير للعقدة الجديدة</p>
+                        <br>
+                        <div style="font-family: monospace;">
+                            قبل: Head → [5|→] → [12|NULL]<br>
+                            بعد: Head → [3|→] → [5|→] → [12|NULL]
+                        </div>
+                    </div>
+
+                    <h3>2. الإدراج في النهاية</h3>
+                    <div class="code-block">
+void insertAtEnd(int value) {
+    Node* newNode = new Node(value);
+    
+    if(head == nullptr) {
+        head = newNode;  // القائمة فارغة
+        return;
+    }
+    
+    // البحث عن آخر عقدة
+    Node* current = head;
+    while(current->next != nullptr) {
+        current = current->next;
+    }
+    
+    current->next = newNode;
+    cout << "تم إضافة " << value << " في نهاية القائمة" << endl;
+}
+                    </div>
+                </div>
+
+                <!-- الشريحة 4: عمليات الحذف -->
+                <div class="slide">
+                    <h2>عمليات الحذف</h2>
+
+                    <h3>حذف عقدة بقيمة محددة</h3>
+                    <div class="code-block">
+bool deleteNode(int value) {
+    // فحص إذا كانت القائمة فارغة
+    if(head == nullptr) {
+        cout << "القائمة فارغة" << endl;
+        return false;
+    }
+    
+    // حذف العقدة الأولى
+    if(head->data == value) {
+        Node* nodeToDelete = head;
+        head = head->next;
+        delete nodeToDelete;
+        cout << "تم حذف " << value << " من بداية القائمة" << endl;
+        return true;
+    }
+    
+    // البحث والحذف
+    Node* current = head;
+    while(current->next != nullptr && current->next->data != value) {
+        current = current->next;
+    }
+    
+    if(current->next == nullptr) {
+        cout << "العنصر " << value << " غير موجود" << endl;
+        return false;
+    }
+    
+    Node* nodeToDelete = current->next;
+    current->next = nodeToDelete->next;
+    delete nodeToDelete;
+    cout << "تم حذف " << value << " من القائمة" << endl;
+    return true;
+}
+                    </div>
+
+                    <div class="visual-demo">
+                        <h4>مثال على الحذف:</h4>
+                        <div style="font-family: monospace;">
+                            قبل الحذف: [5|→] → [12|→] → [8|→] → [3|NULL]<br>
+                            حذف 12: [5|→] → [8|→] → [3|NULL]
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الشريحة 5: التطبيق العملي -->
+                <div class="slide">
+                    <h2>تطبيق عملي: قائمة جهات الاتصال</h2>
+
+                    <div class="code-block">
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+struct Contact {
+    string name;
+    string phone;
+    Contact* next;
+    
+    Contact(string n, string p) : name(n), phone(p), next(nullptr) {}
+};
+
+class ContactList {
+private:
+    Contact* head;
+    
+public:
+    ContactList() : head(nullptr) {}
+    
+    void addContact(string name, string phone) {
+        Contact* newContact = new Contact(name, phone);
+        newContact->next = head;
+        head = newContact;
+        cout << "تم إضافة جهة الاتصال: " << name << endl;
+    }
+    
+    void displayContacts() {
+        if(head == nullptr) {
+            cout << "قائمة الاتصالات فارغة" << endl;
+            return;
+        }
+        
+        cout << "قائمة جهات الاتصال:" << endl;
+        Contact* current = head;
+        int index = 1;
+        while(current != nullptr) {
+            cout << index << ". " << current->name 
+                 << " - " << current->phone << endl;
+            current = current->next;
+            index++;
+        }
+    }
+    
+    bool deleteContact(string name) {
+        if(head == nullptr) return false;
+        
+        // حذف من البداية
+        if(head->name == name) {
+            Contact* temp = head;
+            head = head->next;
+            delete temp;
+            return true;
+        }
+        
+        // البحث والحذف
+        Contact* current = head;
+        while(current->next != nullptr && current->next->name != name) {
+            current = current->next;
+        }
+        
+        if(current->next == nullptr) return false;
+        
+        Contact* temp = current->next;
+        current->next = temp->next;
+        delete temp;
+        return true;
+    }
+};
+                    </div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="nav-button" id="linkedlist-prev" onclick="previousSlide('linkedlist')" disabled>السابق</button>
+                <span class="slide-counter" id="linkedlist-counter">1 من 5</span>
+                <button class="nav-button" id="linkedlist-next" onclick="nextSlide('linkedlist')">التالي</button>
+            </div>
+        </div>
+
+        <!-- عرض القوائم المضاعفة والدائرية -->
+        <div id="doubly-presentation" class="presentation-container">
+            <div class="presentation-header">
+                <h2>القوائم المضاعفة والدائرية</h2>
+                <button class="nav-button back-button" onclick="showTopics()">العودة للقائمة الرئيسية</button>
+            </div>
+            <div class="presentation-content">
+                <!-- الشريحة 1: القوائم المضاعفة -->
+                <div class="slide active">
+                    <h2>القوائم المترابطة المضاعفة (Doubly Linked Lists)</h2>
+                    <p>قائمة مترابطة حيث كل عقدة لها مؤشرين: واحد للعقدة التالية وآخر للعقدة السابقة.</p>
+
+                    <div class="diagram">
+                        <h4>بنية العقدة المضاعفة:</h4>
+                        <pre>
+┌─────────┬─────────┬─────────┐
+│  السابق  │  البيانات │  التالي  │
+│ (Prev)  │ (Data)  │ (Next)  │
+└─────────┴─────────┴─────────┘
+                        </pre>
+                    </div>
+
+                    <div class="code-block">
+class DoublyNode {
+public:
+    int data;
+    DoublyNode* next;     // مؤشر للعقدة التالية
+    DoublyNode* prev;     // مؤشر للعقدة السابقة
+    
+    DoublyNode(int value) {
+        data = value;
+        next = nullptr;
+        prev = nullptr;
+    }
+};
+
+class DoublyLinkedList {
+private:
+    DoublyNode* head;     // بداية القائمة
+    DoublyNode* tail;     // نهاية القائمة
+    
+public:
+    DoublyLinkedList() {
+        head = nullptr;
+        tail = nullptr;
+    }
+};
+                    </div>
+
+                    <div class="visual-demo">
+                        <h4>مثال قائمة مضاعفة:</h4>
+                        <div style="font-family: monospace; font-size: 12px;">
+                            NULL ← [5] ↔ [12] ↔ [8] ↔ [3] → NULL
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الشريحة 2: عمليات القوائم المضاعفة -->
+                <div class="slide">
+                    <h2>عمليات القوائم المضاعفة</h2>
+
+                    <h3>الإدراج في البداية</h3>
+                    <div class="code-block">
+void insertAtBeginning(int value) {
+    DoublyNode* newNode = new DoublyNode(value);
+    
+    if(head == nullptr) {
+        head = tail = newNode;  // القائمة فارغة
+    } else {
+        newNode->next = head;
+        head->prev = newNode;
+        head = newNode;
+    }
+    cout << "تم إضافة " << value << " في بداية القائمة المضاعفة" << endl;
+}
+                    </div>
+
+                    <h3>الإدراج في النهاية</h3>
+                    <div class="code-block">
+void insertAtEnd(int value) {
+    DoublyNode* newNode = new DoublyNode(value);
+    
+    if(tail == nullptr) {
+        head = tail = newNode;  // القائمة فارغة
+    } else {
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
+    }
+    cout << "تم إضافة " << value << " في نهاية القائمة المضاعفة" << endl;
+}
+                    </div>
+
+                    <div class="example-box">
+                        <strong>مزايا القوائم المضاعفة:</strong>
+                        <ul>
+                            <li>إمكانية التنقل في الاتجاهين</li>
+                            <li>حذف سريع عند معرفة موقع العقدة</li>
+                            <li>تنفيذ عمليات معقدة بسهولة أكبر</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- الشريحة 3: القوائم الدائرية -->
+                <div class="slide">
+                    <h2>القوائم المترابطة الدائرية (Circular Linked Lists)</h2>
+                    <p>قائمة مترابطة حيث العقدة الأخيرة تشير إلى العقدة الأولى، مكونة دائرة مغلقة.</p>
+
+                    <div class="visual-demo">
+                        <h4>القائمة الدائرية:</h4>
+                        <div style="font-family: monospace; text-align: center;">
+                            <pre>
+    [5] → [12]
+     ↑      ↓
+    [3] ← [8]
+                            </pre>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+class CircularLinkedList {
+private:
+    Node* head;
+    
+public:
+    CircularLinkedList() : head(nullptr) {}
+    
+    void insertAtEnd(int value) {
+        Node* newNode = new Node(value);
+        
+        if(head == nullptr) {
+            head = newNode;
+            newNode->next = head;  // تشير لنفسها
+        } else {
+            Node* current = head;
+            // البحث عن آخر عقدة
+            while(current->next != head) {
+                current = current->next;
+            }
+            current->next = newNode;
+            newNode->next = head;  // ربط بالبداية
+        }
+        cout << "تم إضافة " << value << " في القائمة الدائرية" << endl;
+    }
+};
+                    </div>
+                </div>
+
+                <!-- الشريحة 4: عرض القوائم الدائرية -->
+                <div class="slide">
+                    <h2>عرض القوائم الدائرية</h2>
+
+                    <div class="code-block">
+void display() {
+    if(head == nullptr) {
+        cout << "القائمة الدائرية فارغة" << endl;
+        return;
+    }
+    
+    cout << "عناصر القائمة الدائرية: ";
+    Node* current = head;
+    
+    // استخدام do-while للتأكد من عرض العقدة الأولى
+    do {
+        cout << current->data << " ";
+        current = current->next;
+    } while(current != head);  // التوقف عند العودة للبداية
+    
+    cout << "(عودة للبداية)" << endl;
+}
+
+// البحث في القائمة الدائرية
+bool search(int value) {
+    if(head == nullptr) return false;
+    
+    Node* current = head;
+    do {
+        if(current->data == value) {
+            cout << "تم العثور على " << value << " في القائمة" << endl;
+            return true;
+        }
+        current = current->next;
+    } while(current != head);
+    
+    cout << "لم يتم العثور على " << value << endl;
+    return false;
+}
+                    </div>
+
+                    <div class="note-box">
+                        <strong>تحذير هام:</strong> في القوائم الدائرية، تأكد من استخدام شروط توقف صحيحة لتجنب الحلقات اللانهائية!
+                    </div>
+                </div>
+
+                <!-- الشريحة 5: المقارنة والتطبيقات -->
+                <div class="slide">
+                    <h2>المقارنة بين أنواع القوائم</h2>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                        <div class="example-box">
+                            <h4>القائمة البسيطة</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>بساطة في التطبيق</li>
+                                <li>ذاكرة أقل لكل عقدة</li>
+                                <li>اتجاه واحد فقط</li>
+                            </ul>
+                        </div>
+                        <div class="example-box">
+                            <h4>القائمة المضاعفة</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>تنقل في الاتجاهين</li>
+                                <li>حذف أسهل</li>
+                                <li>ذاكرة إضافية</li>
+                            </ul>
+                        </div>
+                        <div class="example-box">
+                            <h4>القائمة الدائرية</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>لا نهاية للقائمة</li>
+                                <li>مثالية للتطبيقات الدائرية</li>
+                                <li>حذر من الحلقات اللانهائية</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>تطبيقات عملية:</h3>
+                    <div class="code-block">
+// مثال: قائمة تشغيل الموسيقى (دائرية)
+class Playlist {
+    Node* currentSong;
+    
+    void nextSong() {
+        if(currentSong != nullptr) {
+            currentSong = currentSong->next;
+            cout << "الأغنية التالية: " << currentSong->data << endl;
+        }
+    }
+    
+    void previousSong() {
+        // في القائمة المضاعفة الدائرية
+        if(currentSong != nullptr) {
+            currentSong = currentSong->prev;
+            cout << "الأغنية السابقة: " << currentSong->data << endl;
+        }
+    }
+};
+
+// مثال: نظام تنقل المتصفح (مضاعف)
+class BrowserHistory {
+    DoublyNode* currentPage;
+    
+    void goBack() {
+        if(currentPage && currentPage->prev) {
+            currentPage = currentPage->prev;
+            cout << "العودة للصفحة: " << currentPage->data << endl;
+        }
+    }
+    
+    void goForward() {
+        if(currentPage && currentPage->next) {
+            currentPage = currentPage->next;
+            cout << "التقدم للصفحة: " << currentPage->data << endl;
+        }
+    }
+};
+                    </div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="nav-button" id="doubly-prev" onclick="previousSlide('doubly')" disabled>السابق</button>
+                <span class="slide-counter" id="doubly-counter">1 من 5</span>
+                <button class="nav-button" id="doubly-next" onclick="nextSlide('doubly')">التالي</button>
+            </div>
+        </div>
+
+        <!-- عرض المكدس -->
+        <div id="stack-presentation" class="presentation-container">
+            <div class="presentation-header">
+                <h2>المكدس (Stack)</h2>
+                <button class="nav-button back-button" onclick="showTopics()">العودة للقائمة الرئيسية</button>
+            </div>
+            <div class="presentation-content">
+                <!-- الشريحة 1: مقدمة المكدس -->
+                <div class="slide active">
+                    <h2>ما هو المكدس؟</h2>
+                    <p>المكدس هو هيكل بيانات خطي يتبع مبدأ <strong>LIFO (Last In, First Out)</strong> - آخر داخل أول خارج.</p>
+
+                    <div class="visual-demo">
+                        <h4>تشبيه المكدس:</h4>
+                        <div style="text-align: center; margin: 20px 0;">
+                            <div style="display: inline-block; border: 3px solid #3498db; border-top: none; width: 100px; height: 30px; background: #e74c3c; color: white; line-height: 24px;">4 (Top)</div><br>
+                            <div style="display: inline-block; border: 3px solid #3498db; border-top: none; width: 100px; height: 30px; background: #f39c12; color: white; line-height: 24px;">3</div><br>
+                            <div style="display: inline-block; border: 3px solid #3498db; border-top: none; width: 100px; height: 30px; background: #27ae60; color: white; line-height: 24px;">2</div><br>
+                            <div style="display: inline-block; border: 3px solid #3498db; width: 100px; height: 30px; background: #9b59b6; color: white; line-height: 24px;">1 (Bottom)</div>
+                        </div>
+                        <p>مثل كومة الأطباق - نضع ونأخذ من الأعلى فقط!</p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>العمليات الأساسية:</strong>
+                        <ul>
+                            <li><strong>Push:</strong> إضافة عنصر لأعلى المكدس</li>
+                            <li><strong>Pop:</strong> إزالة العنصر العلوي</li>
+                            <li><strong>Peek/Top:</strong> النظر للعنصر العلوي دون إزالته</li>
+                            <li><strong>isEmpty:</strong> فحص إذا كان المكدس فارغاً</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- الشريحة 2: تطبيق المكدس بالمصفوفة -->
+                <div class="slide">
+                    <h2>تطبيق المكدس بالمصفوفة</h2>
+
+                    <div class="code-block">
+class ArrayStack {
+private:
+    int* data;          // مصفوفة لحفظ العناصر
+    int top;            // مؤشر لأعلى عنصر
+    int capacity;       // السعة القصوى
+    
+public:
+    // منشئ المكدس
+    ArrayStack(int size) {
+        capacity = size;
+        data = new int[capacity];
+        top = -1;  // المكدس فارغ
+        cout << "تم إنشاء مكدس بسعة " << size << endl;
+    }
+    
+    // مدمر المكدس
+    ~ArrayStack() {
+        delete[] data;
+        cout << "تم تحرير ذاكرة المكدس" << endl;
+    }
+    
+    // فحص إذا كان المكدس فارغاً
+    bool isEmpty() {
+        return top == -1;
+    }
+    
+    // فحص إذا كان المكدس ممتلئاً
+    bool isFull() {
+        return top == capacity - 1;
+    }
+};
+                    </div>
+
+                    <div class="visual-demo">
+                        <h4>حالة المكدس في الذاكرة:</h4>
+                        <div style="font-family: monospace;">
+                            المؤشر top = 2<br>
+                            <div class="memory-block filled">10</div>
+                            <div class="memory-block filled">20</div>
+                            <div class="memory-block filled" style="background: #e74c3c;">30 ← top</div>
+                            <div class="memory-block">?</div>
+                            <div class="memory-block">?</div>
+                            <br>
+                            المؤشر:&nbsp;&nbsp; 0 &nbsp;&nbsp;&nbsp;&nbsp; 1 &nbsp;&nbsp;&nbsp;&nbsp; 2 &nbsp;&nbsp;&nbsp;&nbsp; 3 &nbsp;&nbsp;&nbsp;&nbsp; 4
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الشريحة 3: عمليات Push و Pop -->
+                <div class="slide">
+                    <h2>عمليات Push و Pop</h2>
+
+                    <h3>عملية Push (الإضافة)</h3>
+                    <div class="code-block">
+void push(int value) {
+    // فحص إذا كان المكدس ممتلئاً
+    if(isFull()) {
+        cout << "خطأ: المكدس ممتلئ!" << endl;
+        return;
+    }
+    
+    // إضافة العنصر وتحديث المؤشر
+    data[++top] = value;
+    cout << "تم دفع " << value << " للمكدس" << endl;
+}
+                    </div>
+
+                    <h3>عملية Pop (الإزالة)</h3>
+                    <div class="code-block">
+int pop() {
+    // فحص إذا كان المكدس فارغاً
+    if(isEmpty()) {
+        cout << "خطأ: المكدس فارغ!" << endl;
+        return -1;  // قيمة خطأ
+    }
+    
+    // إرجاع العنصر وتقليل المؤشر
+    int value = data[top--];
+    cout << "تم سحب " << value << " من المكدس" << endl;
+    return value;
+}
+                    </div>
+
+                    <h3>عملية Peek (النظر)</h3>
+                    <div class="code-block">
+int peek() {
+    if(isEmpty()) {
+        cout << "المكدس فارغ" << endl;
+        return -1;
+    }
+    return data[top];  // إرجاع دون تغيير المؤشر
+}
+                    </div>
+
+                    <div class="visual-demo">
+                        <h4>مثال تطبيقي:</h4>
+                        <div style="font-family: monospace; text-align: left;">
+                            push(10) → top = 0, المكدس: [10]<br>
+                            push(20) → top = 1, المكدس: [10, 20]<br>
+                            push(30) → top = 2, المكدس: [10, 20, 30]<br>
+                            pop()    → يرجع 30, top = 1, المكدس: [10, 20]<br>
+                            peek()   → يرجع 20, المكدس: [10, 20] (بدون تغيير)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الشريحة 4: تطبيق فحص توازن الأقواس -->
+                <div class="slide">
+                    <h2>تطبيق عملي: فحص توازن الأقواس</h2>
+                    <p>واحد من أشهر تطبيقات المكدس هو فحص توازن الأقواس في التعابير الرياضية والبرمجية.</p>
+
+                    <div class="code-block">
+bool isBalanced(string expression) {
+    ArrayStack bracketStack(100);
+    
+    for(int i = 0; i < expression.length(); i++) {
+        char ch = expression[i];
+        
+        // دفع الأقواس المفتوحة
+        if(ch == '(' || ch == '[' || ch == '{') {
+            bracketStack.push(ch);
+        }
+        // فحص الأقواس المغلقة
+        else if(ch == ')' || ch == ']' || ch == '}') {
+            if(bracketStack.isEmpty()) {
+                return false;  // قوس مغلق بدون مفتوح
+            }
+            
+            char top = bracketStack.pop();
+            
+            // فحص التطابق
+            if((ch == ')' && top != '(') ||
+               (ch == ']' && top != '[') ||
+               (ch == '}' && top != '{')) {
+                return false;  // أقواس غير متطابقة
+            }
+        }
+    }
+    
+    // يجب أن يكون المكدس فارغاً في النهاية
+    return bracketStack.isEmpty();
+}
+                    </div>
+
+                    <div class="example-box">
+                        <h4>أمثلة على الاختبار:</h4>
+                        <div style="font-family: monospace;">
+                            "([{}])" → متوازن ✓<br>
+                            "([)]"   → غير متوازن ✗<br>
+                            "((()))" → متوازن ✓<br>
+                            "({[}])" → غير متوازن ✗<br>
+                            ""       → متوازن ✓
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الشريحة 5: تطبيقات أخرى للمكدس -->
+                <div class="slide">
+                    <h2>تطبيقات أخرى للمكدس</h2>
+
+                    <div class="example-box">
+                        <h4>1. تقييم التعابير الرياضية</h4>
+                        <div class="code-block">
+// تحويل التعبير من Infix إلى Postfix
+// مثال: (3 + 4) * 5 → 3 4 + 5 *
+string infixToPostfix(string infix) {
+    ArrayStack operatorStack(100);
+    string postfix = "";
+    
+    for(char ch : infix) {
+        if(isdigit(ch)) {
+            postfix += ch;
+            postfix += " ";
+        }
+        else if(ch == '(') {
+            operatorStack.push(ch);
+        }
+        else if(ch == ')') {
+            while(!operatorStack.isEmpty() && operatorStack.peek() != '(') {
+                postfix += operatorStack.pop();
+                postfix += " ";
+            }
+            operatorStack.pop(); // إزالة '('
+        }
+        // معالجة العمليات الأخرى...
+    }
+    
+    return postfix;
+}
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>2. تتبع استدعاءات الدوال (Function Call Stack)</h4>
+                        <div class="code-block">
+// مثال: حساب المضروب باستخدام الاستدعاء المتكرر
+int factorial(int n) {
+    if(n <= 1) {
+        return 1;  // الحالة الأساسية
+    }
+    
+    // كل استدعاء يُحفظ في المكدس
+    return n * factorial(n - 1);
+}
+
+// عند استدعاء factorial(5):
+// المكدس: factorial(5) ← factorial(4) ← factorial(3) ← factorial(2) ← factorial(1)
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>3. عمليات Undo/Redo</h4>
+                        <div class="code-block">
+class TextEditor {
+private:
+    ArrayStack undoStack;
+    ArrayStack redoStack;
+    string currentText;
+    
+public:
+    void typeText(string text) {
+        undoStack.push(currentText);  // حفظ الحالة الحالية
+        currentText += text;
+        // مسح redo stack عند كتابة جديدة
+        while(!redoStack.isEmpty()) {
+            redoStack.pop();
+        }
+    }
+    
+    void undo() {
+        if(!undoStack.isEmpty()) {
+            redoStack.push(currentText);
+            currentText = undoStack.pop();
+        }
+    }
+    
+    void redo() {
+        if(!redoStack.isEmpty()) {
+            undoStack.push(currentText);
+            currentText = redoStack.pop();
+        }
+    }
+};
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="nav-button" id="stack-prev" onclick="previousSlide('stack')" disabled>السابق</button>
+                <span class="slide-counter" id="stack-counter">1 من 5</span>
+                <button class="nav-button" id="stack-next" onclick="nextSlide('stack')">التالي</button>
+            </div>
+        </div>
+
+        <!-- عرض الطابور -->
+        <div id="queue-presentation" class="presentation-container">
+            <div class="presentation-header">
+                <h2>الطابور (Queue)</h2>
+                <button class="nav-button back-button" onclick="showTopics()">العودة للقائمة الرئيسية</button>
+            </div>
+            <div class="presentation-content">
+                <!-- شرائح الطابور... -->
+                <div class="slide active">
+                    <h2>مبدأ FIFO في الطوابير</h2>
+                    <p>الطابور يتبع مبدأ <strong>FIFO (First In, First Out)</strong> - أول داخل أول خارج.</p>
+                    <!-- محتوى إضافي للطابور... -->
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="nav-button" id="queue-prev" onclick="previousSlide('queue')" disabled>السابق</button>
+                <span class="slide-counter" id="queue-counter">1 من 5</span>
+                <button class="nav-button" id="queue-next" onclick="nextSlide('queue')">التالي</button>
+            </div>
+        </div>
+
+        <!-- عرض الأشجار -->
+        <div id="trees-presentation" class="presentation-container">
+            <div class="presentation-header">
+                <h2>الأشجار الثنائية (Binary Trees)</h2>
+                <button class="nav-button back-button" onclick="showTopics()">العودة للقائمة الرئيسية</button>
+            </div>
+            <div class="presentation-content">
+                <!-- شرائح الأشجار... -->
+                <div class="slide active">
+                    <h2>مقدمة الأشجار الثنائية</h2>
+                    <p>الأشجار هي هياكل بيانات هرمية غير خطية...</p>
+                    <!-- محتوى إضافي للأشجار... -->
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="nav-button" id="trees-prev" onclick="previousSlide('trees')" disabled>السابق</button>
+                <span class="slide-counter" id="trees-counter">1 من 5</span>
+                <button class="nav-button" id="trees-next" onclick="nextSlide('trees')">التالي</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // متغيرات عامة لتتبع الشرائح
+        const presentations = {
+            'arrays': { currentSlide: 0, totalSlides: 5 },
+            'linkedlist': { currentSlide: 0, totalSlides: 5 },
+            'doubly': { currentSlide: 0, totalSlides: 5 },
+            'stack': { currentSlide: 0, totalSlides: 5 },
+            'queue': { currentSlide: 0, totalSlides: 5 },
+            'trees': { currentSlide: 0, totalSlides: 5 }
+        };
+
+        // إظهار قائمة المواضيع
+        function showTopics() {
+            document.getElementById('topics-section').style.display = 'block';
+            
+            // إخفاء جميع العروض
+            const allPresentations = document.querySelectorAll('.presentation-container');
+            allPresentations.forEach(presentation => {
+                presentation.style.display = 'none';
+            });
+        }
+
+        // إظهار عرض تقديمي محدد
+        function showPresentation(topic) {
+            document.getElementById('topics-section').style.display = 'none';
+            document.getElementById(topic + '-presentation').style.display = 'block';
+            
+            // إعادة تعيين الشريحة الحالية
+            presentations[topic].currentSlide = 0;
+            updateSlideDisplay(topic);
+        }
+
+        // الانتقال للشريحة التالية
+        function nextSlide(topic) {
+            if (presentations[topic].currentSlide < presentations[topic].totalSlides - 1) {
+                presentations[topic].currentSlide++;
+                updateSlideDisplay(topic);
+            }
+        }
+
+        // الانتقال للشريحة السابقة
+        function previousSlide(topic) {
+            if (presentations[topic].currentSlide > 0) {
+                presentations[topic].currentSlide--;
+                updateSlideDisplay(topic);
+            }
+        }
+
+        // تحديث عرض الشرائح
+        function updateSlideDisplay(topic) {
+            const presentation = document.getElementById(topic + '-presentation');
+            const slides = presentation.querySelectorAll('.slide');
+            const currentSlide = presentations[topic].currentSlide;
+            
+            // إخفاء جميع الشرائح
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // إظهار الشريحة الحالية
+            slides[currentSlide].classList.add('active');
+            
+            // تحديث عداد الشرائح
+            const counter = document.getElementById(topic + '-counter');
+            counter.textContent = `${currentSlide + 1} من ${presentations[topic].totalSlides}`;
+            
+            // تحديث حالة الأزرار
+            const prevButton = document.getElementById(topic + '-prev');
+            const nextButton = document.getElementById(topic + '-next');
+            
+            prevButton.disabled = currentSlide === 0;
+            nextButton.disabled = currentSlide === presentations[topic].totalSlides - 1;
+        }
+
+        // إضافة مستمعي الأحداث لتنقل لوحة المفاتيح
+        document.addEventListener('keydown', function(event) {
+            const activePresentation = document.querySelector('.presentation-container[style*="block"]');
+            if (!activePresentation) return;
+            
+            const topic = activePresentation.id.replace('-presentation', '');
+            
+            if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                nextSlide(topic);
+            } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                previousSlide(topic);
+            } else if (event.key === 'Escape') {
+                showTopics();
+            }
+        });
+
+        // تأثيرات بصرية إضافية
+        document.addEventListener('DOMContentLoaded', function() {
+            // تأثير الكتابة للعناوين
+            const headers = document.querySelectorAll('h1, h2');
+            headers.forEach(header => {
+                header.style.opacity = '0';
+                header.style.transform = 'translateY(20px)';
+                header.style.transition = 'all 0.6s ease';
+                
+                setTimeout(() => {
+                    header.style.opacity = '1';
+                    header.style.transform = 'translateY(0)';
+                }, Math.random() * 500);
+            });
+        });
+    </script>
+</body>
+</html>
